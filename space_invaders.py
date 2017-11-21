@@ -22,7 +22,7 @@ class DropDodger(Game):
     MAX_MSG_LEN = SCREEN_WIDTH - MSG_START - 1
     CHAR_WIDTH = 16
     CHAR_HEIGHT = 16
-    GAME_TITLE = "Dodge the Raindrops"
+    GAME_TITLE = "Space Invaders"
     CHAR_SET = "terminal16x16_gs_ro.png"
 
 
