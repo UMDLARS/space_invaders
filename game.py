@@ -7,13 +7,13 @@ from CYLGame import MessagePanel
 from CYLGame import MapPanel
 from CYLGame import StatusPanel
 from CYLGame import PanelBorder
-from Invader import Invader
+from resources.Invader import Invader
 
 class Direction(Enum):
     RIGHT = 1
     LEFT = 2
 
-class DropDodger(Game):
+class SpaceInvaders(Game):
     MAP_WIDTH = 60
     MAP_HEIGHT = 25
     SCREEN_WIDTH = 60
@@ -23,18 +23,15 @@ class DropDodger(Game):
     CHAR_WIDTH = 16
     CHAR_HEIGHT = 16
     GAME_TITLE = "Space Invaders"
-    CHAR_SET = "terminal16x16_gs_ro.png"
+    CHAR_SET = "resources/terminal16x16_gs_ro.png"
 
 
     NUM_OF_INVADERS = 10
     TOTAL_INVADERS = 10
-    NUM_OF_PITS_START = 0
-    NUM_OF_PITS_PER_LEVEL = 8
-    MAX_TURNS = 300
+    MAX_TURNS = 900
 
     PLAYER = '@'
     EMPTY = ' '
-    PIT = '^'
     INVADER = 'X'
     MISSILE = '!'
     BULLET = '#'
@@ -46,7 +43,6 @@ class DropDodger(Game):
     def __init__(self, random):
         self.random = random
         self.running = True
-        self.in_pit = False
         self.centerx = self.MAP_WIDTH / 2
         self.centery = self.MAP_HEIGHT / 2
         self.player_pos = [self.centerx, (int) (self.MAP_HEIGHT * .99)]
@@ -69,7 +65,6 @@ class DropDodger(Game):
         self.status_panel = StatusPanel(0, self.MAP_HEIGHT+1, self.MSG_START, 5)
         self.panels = [self.msg_panel, self.status_panel]
         self.msg_panel.add("Welcome to "+self.GAME_TITLE+"!!!")
-        self.msg_panel.add("Move left and right to avoid being hit by the raindrops")
         self.lives = 3
         self.life_lost = False
 
@@ -97,15 +92,11 @@ class DropDodger(Game):
           if h < 4 and w >=20 and w <= 40: #4 rows of 20 aliens (22 technically)
             self.invaders.append(Invader((w, h)))
             self.map[(w, h)] = self.INVADER
-            #TODO: delete
-            #self.map[(w, h)] = self.INVADER
-            #self.placed_invaders += 1
           #generate the barriers
           if h >= self.MAP_HEIGHT - 1 - barrier_height and h < self.MAP_HEIGHT - 1:
             #it's a barrier row
             if w >= start_barrier and w <= start_barrier + barrier_width: #we draw the barrier
               self.map[(w, h)] = self.BARRIER_4
-              #TODO: dont' overwrite start barrier while looping over the rightmost column of the barrier - this leads to only one being drawn
               if w == start_barrier + barrier_width:
                 set_sb = True
         if set_sb:
@@ -135,12 +126,6 @@ class DropDodger(Game):
 
 
 
-
-    #TODO: delete
-    #def place_invaders(self, count):
-    #    self.place_objects(self.INVADER, count)
-    #    self.invaders_left += count
-    #    self.placed_invaders += count
 
     def fire_missiles(self):
         for invader in self.invaders:
@@ -326,16 +311,12 @@ class DropDodger(Game):
             self.running = False
             return
 
-        #TODO: what does this do?
-        # self.player_pos[0] %= self.MAP_WIDTH
-        # self.player_pos[1] %= self.MAP_HEIGHT
-
         #move the invaders
         self.move_bullets() #we do hits detection first
         self.move_invaders()
         self.move_missiles(self.gravity_power) #move all drops down 1
 
-        #collision detection #TODO: this detection code doesn't need to exist
+        #collision detection 
         position = self.map[(self.player_pos[0], self.player_pos[1])]
         position_left = self.map[(self.player_left[0], self.player_left[1])]
         position_right = self.map[(self.player_right[0], self.player_right[1])]
@@ -347,8 +328,10 @@ class DropDodger(Game):
         if position_right == self.MISSILE or position == self.INVADER:
           collision = True
 
+        # self.msg_panel.remove("You lost a life!")
         if collision:
             print("You lost a life!")
+            self.msg_panel.add(["You lost a life!"])
             position = self.EMPTY #clear the position
             self.lives -= 1
             #reset to center
@@ -365,16 +348,12 @@ class DropDodger(Game):
 
         
 
-        #TODO: lives lost
 
         #Fire the missiles
-        #TODO: uncomment
         self.fire_missiles()
 
         if len(self.invaders) == 0:
             self.level += 1
-            # self.place_drops(self.NUM_OF_DROPS)
-            # self.place_pits(self.NUM_OF_PITS_PER_LEVEL)
         #first we clear all the prevoius invaders
         for old_invader in self.map.get_all_pos(self.INVADER):
             self.map[old_invader] = self.EMPTY
@@ -412,12 +391,10 @@ class DropDodger(Game):
 
     def is_running(self):
         return self.running
-    #TODO: finish this method
-    def life_lost(self):
-        return 0
 
     def get_vars_for_bot(self):
         bot_vars = {}
+        #TODO: send an array of missle positions, invader positions, can_fire/bullet pos, and barriers
 
         x_dir, y_dir = self.find_closest_apple(*self.player_pos)
 
@@ -426,15 +403,6 @@ class DropDodger(Game):
 
         bot_vars = {"x_dir": x_dir_to_char[x_dir], "y_dir": y_dir_to_char[y_dir],
                     "pit_to_east": 0, "pit_to_west": 0, "pit_to_north": 0, "pit_to_south": 0}
-
-        if self.map[((self.player_pos[0]+1)%self.MAP_WIDTH, self.player_pos[1])] == self.PIT:
-            bot_vars["pit_to_east"] = 1
-        if self.map[((self.player_pos[0]-1)%self.MAP_WIDTH, self.player_pos[1])] == self.PIT:
-            bot_vars["pit_to_west"] = 1
-        if self.map[(self.player_pos[0], (self.player_pos[1]-1)%self.MAP_HEIGHT)] == self.PIT:
-            bot_vars["pit_to_north"] = 1
-        if self.map[(self.player_pos[0], (self.player_pos[1]+1)%self.MAP_HEIGHT)] == self.PIT:
-            bot_vars["pit_to_south"] = 1
 
         return bot_vars
 
@@ -474,7 +442,14 @@ class DropDodger(Game):
         for panel in self.panels:
             panel.redraw(frame_buffer)
 
+    @staticmethod
+    def get_move_consts():
+      return {"west": ord("a"), "east": ord("d"), "fire": ord(" "), "stay": ord(".")}
+    @staticmethod
+    def get_move_names():
+      return {ord("a"): "West", ord("d"): "East", ord(" "): "Fire", ord("."): "Stay"}
+
 
 if __name__ == '__main__':
     from CYLGame import run
-    run(DropDodger)
+    run(SpaceInvaders)
