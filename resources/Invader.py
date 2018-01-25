@@ -1,6 +1,8 @@
 class Invader:
-  def __init__(self, pos):
+  def __init__(self, pos, sprite):
     self.pos = pos
+    self.sprite = sprite
+    print("sprite type: %d" % self.sprite)
     self.missile = False
     self.bottom = False
   def get_pos(self):

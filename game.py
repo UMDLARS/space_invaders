@@ -30,15 +30,21 @@ class SpaceInvaders(Game):
     TOTAL_INVADERS = 10
     MAX_TURNS = 900
 
-    PLAYER = '@'
+    INVADER0 = chr(244)
+    INVADER1 = chr(245)
+    INVADER2 = chr(246)
+    # create a list of sprite to blit by type on redraw
+    INVADER_SPRITE = [INVADER0, INVADER1, INVADER2]
+    BARRIER_1 = chr(247)
+    BARRIER_2 = chr(248)
+    BARRIER_3 = chr(249)
+    BARRIER_4 = chr(250)
+    MISSILE = chr(251) 
+    BULLET = chr(252)
+    PLAYERL = chr(253)
+    PLAYERC = chr(254)
+    PLAYERR = chr(255)
     EMPTY = ' '
-    INVADER = 'X'
-    MISSILE = '!'
-    BULLET = '#'
-    BARRIER_1 = '1'
-    BARRIER_2 = '2'
-    BARRIER_3 = '3'
-    BARRIER_4 = '4'
 
     def __init__(self, random):
         self.random = random
@@ -75,9 +81,9 @@ class SpaceInvaders(Game):
                             border=PanelBorder.create(bottom="-"))
         self.panels += [self.map]
 
-        self.map[(self.player_pos[0], self.player_pos[1])] = self.PLAYER
-        self.map[(self.player_right[0], self.player_right[1])] = self.PLAYER
-        self.map[(self.player_left[0], self.player_left[1])] = self.PLAYER
+        self.map[(self.player_pos[0], self.player_pos[1])] = self.PLAYERC
+        self.map[(self.player_right[0], self.player_right[1])] = self.PLAYERR
+        self.map[(self.player_left[0], self.player_left[1])] = self.PLAYERL
 
         self.draw_level()
 
@@ -88,10 +94,20 @@ class SpaceInvaders(Game):
       set_sb = False
       for w in range(0, 60):
         for h in range(0, 25):
-          #generating the invaders
-          if h < 4 and w >=20 and w <= 40: #4 rows of 20 aliens (22 technically)
-            self.invaders.append(Invader((w, h)))
-            self.map[(w, h)] = self.INVADER
+          #generating the invaders -- 5 rows of 11, alternating columns and rows
+          if h < 10 and w >=20 and w <= 40: 
+              if (w % 2 == 0) and (h % 2 == 0):
+                if h == 8 or h == 6:
+                    self.invaders.append(Invader((w, h), 2))
+                    self.map[(w, h)] = self.INVADER2
+                elif h == 4 or h == 2:
+                    self.invaders.append(Invader((w, h), 1))
+                    self.map[(w, h)] = self.INVADER1
+                else:
+                    self.invaders.append(Invader((w, h), 0))
+                    self.map[(w, h)] = self.INVADER0
+
+
           #generate the barriers
           if h >= self.MAP_HEIGHT - 1 - barrier_height and h < self.MAP_HEIGHT - 1:
             #it's a barrier row
@@ -321,11 +337,11 @@ class SpaceInvaders(Game):
         position_left = self.map[(self.player_left[0], self.player_left[1])]
         position_right = self.map[(self.player_right[0], self.player_right[1])]
         collision = False
-        if position == self.MISSILE or position == self.INVADER:
+        if position == self.MISSILE or position == self.INVADER2 or position == self.INVADER1 or position == self.INVADER0:
           collision = True
-        if position_left == self.MISSILE or position == self.INVADER:
+        if position_left == self.MISSILE or position == self.INVADER2 or position == self.INVADER1 or position == self.INVADER0:
           collision = True
-        if position_right == self.MISSILE or position == self.INVADER:
+        if position_right == self.MISSILE or position == self.INVADER2 or position == self.INVADER1 or position == self.INVADER0:
           collision = True
 
         # self.msg_panel.remove("You lost a life!")
@@ -342,9 +358,9 @@ class SpaceInvaders(Game):
             for invader in self.invaders:
               invader.set_missile(False)
             self.lost_life = True
-        self.map[(self.player_pos[0], self.player_pos[1])] = self.PLAYER
-        self.map[(self.player_left[0], self.player_left[1])] = self.PLAYER
-        self.map[(self.player_right[0], self.player_right[1])] = self.PLAYER
+        self.map[(self.player_pos[0], self.player_pos[1])] = self.PLAYERC
+        self.map[(self.player_left[0], self.player_left[1])] = self.PLAYERL
+        self.map[(self.player_right[0], self.player_right[1])] = self.PLAYERR
 
         
 
@@ -355,13 +371,17 @@ class SpaceInvaders(Game):
         if len(self.invaders) == 0:
             self.level += 1
         #first we clear all the prevoius invaders
-        for old_invader in self.map.get_all_pos(self.INVADER):
+        for old_invader in self.map.get_all_pos(self.INVADER2):
+            self.map[old_invader] = self.EMPTY
+        for old_invader in self.map.get_all_pos(self.INVADER1):
+            self.map[old_invader] = self.EMPTY
+        for old_invader in self.map.get_all_pos(self.INVADER0):
             self.map[old_invader] = self.EMPTY
         for old_missile in self.map.get_all_pos(self.MISSILE):
             self.map[old_missile] = self.EMPTY
 
         for invader in self.invaders:
-            self.map[invader.get_pos()] = self.INVADER
+            self.map[invader.get_pos()] = self.INVADER_SPRITE[invader.sprite]
             if invader.get_missile():
                 self.map[invader.get_missile()] = self.MISSILE
 
@@ -375,7 +395,7 @@ class SpaceInvaders(Game):
                 if new_pos[1] < self.MAP_HEIGHT:
                     if self.map[new_pos] == self.BULLET: 
                         self.map[new_pos] = self.EMPTY
-                    elif self.map[new_pos] == self.PLAYER:
+                    elif self.map[new_pos] == self.PLAYERL or self.map[new_pos] == self.PLAYERC or self.map[new_pos] == self.PLAYERR:
                         self.life_lost()
                     elif self.is_barrier(self.map[new_pos]):
                         self.map[new_pos] = self.decrement_barrier(self.map[new_pos])
