@@ -30,6 +30,18 @@ class SpaceInvaders(Game):
     TOTAL_INVADERS = 10
     MAX_TURNS = 900
 
+    #we use these for moving the mothership easily 
+    LEFT = -1
+    RIGHT = 1
+    mothership_direction = RIGHT
+
+    MOTHERSHIP_SPEED = 3
+    mothership_exists = False
+
+    MOTHERSHIP_L = chr(241)
+    MOTHERSHIP_C = chr(242)
+    MOTHERSHIP_R = chr(243)
+
     INVADER0 = chr(244)
     INVADER1 = chr(245)
     INVADER2 = chr(246)
@@ -61,6 +73,7 @@ class SpaceInvaders(Game):
         self.apple_pos = []
         self.objects = []
         self.turns = 0
+        self.bullets_fired = 0
         self.level = 0
         self.gravity_power = 1
         self.bullet_speed = 3
@@ -143,6 +156,61 @@ class SpaceInvaders(Game):
 
 
 
+    def handle_mothership(self):
+      #if there is a bullet in center_positon, center_position + direction * 1, * 2, or * 3 or * 4 (the right/left requires the *4, because the offset from center position is 1), or any of those positions are out of bounds, remove the entire mothership
+      #move the center location over by 3. 
+      if not self.mothership_exists:
+        return
+      old_center = self.map.get_all_pos(self.MOTHERSHIP_C).pop()[0]
+      redraw = True
+      for i in range(0, 5):
+          test_x = old_center + i * self.mothership_direction
+          if test_x < 0 or test_x >= self.MAP_WIDTH: #we fell off the map
+            #remove mothership
+            redraw = False
+            self.mothership_exists = False
+      
+      clear_l = self.map.get_all_pos(self.MOTHERSHIP_L).pop()
+      clear_c = self.map.get_all_pos(self.MOTHERSHIP_R).pop()
+      clear_r = self.map.get_all_pos(self.MOTHERSHIP_C).pop()
+
+      if redraw:
+        new_l = (self.map.get_all_pos(self.MOTHERSHIP_L).pop()[0] + 3 * self.mothership_direction, 0)
+        new_c = (self.map.get_all_pos(self.MOTHERSHIP_C).pop()[0] + 3 * self.mothership_direction, 0)
+        new_r = (self.map.get_all_pos(self.MOTHERSHIP_R).pop()[0] + 3 * self.mothership_direction, 0)
+        
+        self.map[new_l] = self.MOTHERSHIP_L
+        self.map[new_c] = self.MOTHERSHIP_C
+        self.map[new_r] = self.MOTHERSHIP_R
+
+      self.map[clear_l] = self.EMPTY
+      self.map[clear_c] = self.EMPTY
+      self.map[clear_r] = self.EMPTY
+      
+      return
+
+    def launch_mothership(self):
+      if self.turns % 45 == 0: #launch mothership every 45 turns
+        self.mothership_exists = True
+        #launch the ship
+        #if the turns are even, we launch from right and vice versa
+        center_x = 1 #when launching from left we have to leave space for the left element
+        if self.turns % 2 == 0:
+          center_x = (int) (self.MAP_WIDTH * .99) -1
+          self.mothership_direction = self.LEFT
+          #launch from right
+          #the top row is 0
+        else:
+          self.mothership_direction = self.RIGHT
+
+        position_l = (center_x - 1, 0)
+        position_c = (center_x, 0)
+        position_r= (center_x + 1, 0)
+        self.map[position_l] = self.MOTHERSHIP_L
+        self.map[position_c] = self.MOTHERSHIP_C
+        self.map[position_r] = self.MOTHERSHIP_R
+
+
     def fire_missiles(self):
         for invader in self.invaders:
             if invader.get_bottom() and not invader.get_missile(): #it can fire
@@ -165,10 +233,13 @@ class SpaceInvaders(Game):
               self.map[bullet_pos] = self.EMPTY
             else:
               self.map[bullet_pos] = self.BULLET
+            self.bullets_fired += 1
     def is_barrier(self, c):
       if c == self.BARRIER_1 or c == self.BARRIER_2 or c == self.BARRIER_3 or c == self.BARRIER_4:
         return True
       return False
+
+
 
     def decrement_barrier(self, c):
       if c == self.BARRIER_1:
@@ -183,12 +254,16 @@ class SpaceInvaders(Game):
         return self.EMPTY
 
     def move_invaders(self):
+
         #determine if we can continue moving in the same direction (nothing will fall off the edge)
         move_down = False
         positions = None
         if self.movement_direction == Direction.RIGHT:
             #sort descending by x value
             positions = sorted([x.get_pos() for x in self.invaders], key=lambda x: x[0], reverse=True)
+            #TODO: will this ever occur when we are not testing? Like when someone wins?
+            if len(positions) == 0:
+              return
             print(positions[0])
             if positions[0][0] + 1 >= self.MAP_WIDTH:
                 move_down = True
@@ -231,6 +306,7 @@ class SpaceInvaders(Game):
                 invader.set_pos(new_pos)
                 #else: #it was hit
                 #    self.map[new_pos] = self.EMPTY
+
                 #    self.invaders.remove(invader)
 
     def move_bullets(self):
@@ -238,8 +314,20 @@ class SpaceInvaders(Game):
         #we need to get the list of all invader positions
         invader_positions = [x.get_pos() for x in self.invaders]
         missile_positions = [x.get_missile() for x in self.invaders]
+        
+        #we generate a list of all the mothership positions that we will encounter
+        mothership_locations = []
+        if self.mothership_exists:
+          mothership_center = self.map.get_all_pos(self.MOTHERSHIP_C).pop()[0]#there is only one mothership
+          #we add 2 because we need to detect a collision with the left/right, as well as the center. 
+          for i in range(0, self.MOTHERSHIP_SPEED+2):
+            pos = ((mothership_center + self.mothership_direction * i), 0)
+            mothership_locations.append(pos)
+          
+
         for pos in sorted(self.map.get_all_pos(self.BULLET), key=lambda x: x[1], reverse=False):
             still_exists = True
+            #we iterate over all the positions that the bullet "warped" through to detect any collisions
             for i in range(0, self.bullet_speed): #0 - 1 so we clear the initial position
                 clear = (pos[0], pos[1] - i)
                 if clear[1] >= 0 and still_exists:
@@ -251,6 +339,14 @@ class SpaceInvaders(Game):
                         still_exists = False
                         self.map[clear] = self.EMPTY
                         self.map[pos] = self.EMPTY
+                    elif clear in mothership_locations:
+                        still_exists = False
+                        #remove the mothership from map
+                        self.map[self.map.get_all_pos(self.MOTHERSHIP_L).pop()] = self.EMPTY
+                        self.map[self.map.get_all_pos(self.MOTHERSHIP_R).pop()] = self.EMPTY
+                        self.map[self.map.get_all_pos(self.MOTHERSHIP_C).pop()] = self.EMPTY
+                        self.mothership_exists = False
+
                     elif self.map[clear] == self.MISSILE:
                         #we need to track downt he invader which owns this missile
                         for invader in self.invaders:
@@ -331,6 +427,7 @@ class SpaceInvaders(Game):
         self.move_bullets() #we do hits detection first
         self.move_invaders()
         self.move_missiles(self.gravity_power) #move all drops down 1
+        self.handle_mothership()
 
         #collision detection 
         position = self.map[(self.player_pos[0], self.player_pos[1])]
@@ -368,6 +465,9 @@ class SpaceInvaders(Game):
         #Fire the missiles
         self.fire_missiles()
 
+
+        self.launch_mothership()
+
         if len(self.invaders) == 0:
             self.level += 1
         #first we clear all the prevoius invaders
@@ -384,6 +484,7 @@ class SpaceInvaders(Game):
             self.map[invader.get_pos()] = self.INVADER_SPRITE[invader.sprite]
             if invader.get_missile():
                 self.map[invader.get_missile()] = self.MISSILE
+
 
     def move_missiles(self, gravity_power): #gravity power is the number of positions a drop will fall per turn
         for invader in self.invaders:
