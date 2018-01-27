@@ -408,12 +408,12 @@ class SpaceInvaders(Game):
         # if key == "s":
             # self.player_pos[1] += 1
         if key == "a":
-          if self.player_left[0] >= 0:
+          if self.player_left[0] - 1 >= 0:
             self.player_pos[0] -= 1
             self.player_right[0] -= 1
             self.player_left[0] -= 1
         if key == "d":
-          if self.player_right[0] < self.MAP_WIDTH:
+          if self.player_right[0] + 1 < self.MAP_WIDTH:
             self.player_pos[0] += 1
             self.player_right[0] += 1
             self.player_left[0] += 1
