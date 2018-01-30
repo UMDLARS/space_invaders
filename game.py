@@ -67,6 +67,7 @@ class SpaceInvaders(Game):
     PLAYERR = chr(255)
     EMPTY = ' '
 
+    fire_rate = 2 #the fire rate of invaders
     def __init__(self, random):
         self.random = random
         self.running = True
@@ -226,7 +227,7 @@ class SpaceInvaders(Game):
                 invader_pos = invader.get_pos()
                 #first we determine if the invader can fire...are there any invaders below it?
                 #second we determine (randomly) if the invader will fire
-                fire = self.random.randint(0, 20)
+                fire = self.random.randint(0, 30 - self.fire_rate) #hacky way of increasing fire percentage
                 if fire == 2: #hacky way to set it to fire at a low percentage only
                     missile_pos = (invader_pos[0], invader_pos[1] + self.gravity_power)
                     invader.set_missile(missile_pos)
@@ -282,6 +283,7 @@ class SpaceInvaders(Game):
             positions = sorted([x.get_pos() for x in self.invaders], key=lambda x: x[0], reverse=False)
             if positions[0][0] - 1 < 0:
                 move_down = True
+                self.fire_rate += 1 #every time they move down, they fire a little bit faster
                 self.movement_direction = Direction.RIGHT
             #sort ascending by x value
         if move_down:
@@ -535,17 +537,55 @@ class SpaceInvaders(Game):
     def get_vars_for_bot(self):
         bot_vars = {}
 
-        #TODO: send an array of missle positions, invader positions, can_fire/bullet pos, and barriers
+
+        #player x location (center)
+
 
         
-        
-        x_dir, y_dir = self.find_closest_apple(*self.player_pos)
+        #mothership x location(center)
+        bonus_ship_x = -1
+        if self.mothership_exists:
+          bonus_ship_x = self.map.get_all_pos(self.MOTHERSHIP_C).pop()[0]
 
-        x_dir_to_char = {-1: ord("a"), 1: ord("d"), 0: 0}
-        y_dir_to_char = {-1: ord("w"), 1: ord("s"), 0: 0}
+        #for these, we send an array where 0 = y and 1 = the character (or self.EMPTY if nothing)
+        #we send -1 if the location is out of bounds (for the left-1 and right+1)
 
-        bot_vars = {"x_dir": x_dir_to_char[x_dir], "y_dir": y_dir_to_char[y_dir],
-                    "pit_to_east": 0, "pit_to_west": 0, "pit_to_north": 0, "pit_to_south": 0}
+        player_left_minus_one = self.EMPTY
+        for i in range(self.MAP_HEIGHT, 0, -1):
+          if self.map.player_pos - 2 < 0:
+            player_left_minus_one = -1
+          elif not self.map[(self.player_pos - 2, self.MAP_HEIGHT -1)] == self.EMPTY:
+            player_left_minus_one = self.map[(self.player_pos - 2, self.MAP_HEIGHT -1)]
+            break
+
+        player_left = self.EMPTY
+        for i in range(self.MAP_HEIGHT, 0, -1):
+          if not self.map[(self.player_pos - 1, self.MAP_HEIGHT -1)] == self.EMPTY:
+            player_left = self.map[(self.player_pos - 1, self.MAP_HEIGHT -1)]
+            break
+
+        player_center = self.EMPTY
+        for i in range(self.MAP_HEIGHT, 0, -1):
+          if not self.map[(self.player_pos, self.MAP_HEIGHT -1)] == self.EMPTY:
+            player_center = self.map[(self.player_pos, self.MAP_HEIGHT -1)]
+            break
+
+        player_right = self.EMPTY
+        for i in range(self.MAP_HEIGHT, 0, -1):
+          if not self.map[(self.player_pos + 1, self.MAP_HEIGHT -1)] == self.EMPTY:
+            player_right = self.map[(self.player_pos + 1, self.MAP_HEIGHT -1)]
+            break
+
+        player_right_plus_one = self.EMPTY
+        for i in range(self.MAP_HEIGHT, 0, -1):
+          if self.map.player_pos + 2 >= self.MAP_WIDTH:
+            player_right_plus_one = -1
+          elif not self.map[(self.player_pos + 2, self.MAP_HEIGHT -1)] == self.EMPTY:
+            player_right_plus_one = self.map[(self.player_pos + 2, self.MAP_HEIGHT -1)]
+            break
+
+
+        bot_vars = {"map": self.map, "bonus_ship_x": bonus_ship_x, "player_pos": self.player_pos, "player_left_minus_one": player_left_minus_one, "player_left": player_left, "player_center": player_center, "player_right": player_right, "player_right_plus_one": player_right_plus_one}
 
         return bot_vars
 
