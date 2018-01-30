@@ -30,6 +30,8 @@ class SpaceInvaders(Game):
     TOTAL_INVADERS = 10
     MAX_TURNS = 900
 
+    score = 0
+
     #we use these for moving the mothership easily 
     LEFT = -1
     RIGHT = 1
@@ -38,13 +40,20 @@ class SpaceInvaders(Game):
     MOTHERSHIP_SPEED = 3
     mothership_exists = False
 
+    
     MOTHERSHIP_L = chr(241)
     MOTHERSHIP_C = chr(242)
     MOTHERSHIP_R = chr(243)
 
-    INVADER0 = chr(244)
-    INVADER1 = chr(245)
-    INVADER2 = chr(246)
+    MOTHERSHIP_POINTS = 300
+    INVADER0_POINTS = 50
+    INVADER1_POINTS = 40
+    INVADER2_POINTS = 30
+
+    INVADER0 = chr(244) #worth 50 points
+    INVADER1 = chr(245) #worth 40 points
+    INVADER2 = chr(246) #worth 30 points
+
     # create a list of sprite to blit by type on redraw
     INVADER_SPRITE = [INVADER0, INVADER1, INVADER2]
     BARRIER_1 = chr(247)
@@ -335,6 +344,15 @@ class SpaceInvaders(Game):
                         #we need to find which invader it was and delete it
                         for invader in self.invaders:
                             if invader.get_pos() == clear:
+
+                                #increment the score for the aliens
+                                if invader.sprite == 0:
+                                  self.score += self.INVADER0_POINTS
+                                if invader.sprite == 1:
+                                  self.score += self.INVADER1_POINTS
+                                if invader.sprite == 2:
+                                  self.score += self.INVADER2_POINTS
+
                                 self.invaders.remove(invader)
                         still_exists = False
                         self.map[clear] = self.EMPTY
@@ -346,6 +364,7 @@ class SpaceInvaders(Game):
                         self.map[self.map.get_all_pos(self.MOTHERSHIP_R).pop()] = self.EMPTY
                         self.map[self.map.get_all_pos(self.MOTHERSHIP_C).pop()] = self.EMPTY
                         self.mothership_exists = False
+                        self.score += self.MOTHERSHIP_POINTS
 
                     elif self.map[clear] == self.MISSILE:
                         #we need to track downt he invader which owns this missile
@@ -515,8 +534,11 @@ class SpaceInvaders(Game):
 
     def get_vars_for_bot(self):
         bot_vars = {}
+
         #TODO: send an array of missle positions, invader positions, can_fire/bullet pos, and barriers
 
+        
+        
         x_dir, y_dir = self.find_closest_apple(*self.player_pos)
 
         x_dir_to_char = {-1: ord("a"), 1: ord("d"), 0: 0}
@@ -559,6 +581,7 @@ class SpaceInvaders(Game):
         self.status_panel["Invaders"] = len(self.invaders)
         self.status_panel["Lives"] = str(self.lives) 
         self.status_panel["Move"] = str(self.turns) + " of " + str(self.MAX_TURNS)
+        self.status_panel["Score"] = str(self.score)
 
         for panel in self.panels:
             panel.redraw(frame_buffer)
