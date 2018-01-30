@@ -39,7 +39,6 @@ class SpaceInvaders(Game):
 
     MOTHERSHIP_SPEED = 3
     mothership_exists = False
-
     
     MOTHERSHIP_L = chr(241)
     MOTHERSHIP_C = chr(242)
@@ -62,9 +61,9 @@ class SpaceInvaders(Game):
     BARRIER_4 = chr(250)
     MISSILE = chr(251) 
     BULLET = chr(252)
-    PLAYERL = chr(253)
-    PLAYERC = chr(254)
-    PLAYERR = chr(255)
+    PLAYER_L = chr(253)
+    PLAYER_C = chr(254)
+    PLAYER_R = chr(255)
     EMPTY = ' '
 
     fire_rate = 2 #the fire rate of invaders
@@ -104,9 +103,9 @@ class SpaceInvaders(Game):
                             border=PanelBorder.create(bottom="-"))
         self.panels += [self.map]
 
-        self.map[(self.player_pos[0], self.player_pos[1])] = self.PLAYERC
-        self.map[(self.player_right[0], self.player_right[1])] = self.PLAYERR
-        self.map[(self.player_left[0], self.player_left[1])] = self.PLAYERL
+        self.map[(self.player_pos[0], self.player_pos[1])] = self.PLAYER_C
+        self.map[(self.player_right[0], self.player_right[1])] = self.PLAYER_R
+        self.map[(self.player_left[0], self.player_left[1])] = self.PLAYER_L
 
         self.draw_level()
 
@@ -419,6 +418,8 @@ class SpaceInvaders(Game):
                 placed_objects += 1
 
     def handle_key(self, key):
+        print("calling getbotvars")
+        self.get_vars_for_bot()
         self.turns += 1
 
         self.map[(self.player_pos[0], self.player_pos[1])] = self.EMPTY
@@ -476,9 +477,9 @@ class SpaceInvaders(Game):
             for invader in self.invaders:
               invader.set_missile(False)
             self.lost_life = True
-        self.map[(self.player_pos[0], self.player_pos[1])] = self.PLAYERC
-        self.map[(self.player_left[0], self.player_left[1])] = self.PLAYERL
-        self.map[(self.player_right[0], self.player_right[1])] = self.PLAYERR
+        self.map[(self.player_pos[0], self.player_pos[1])] = self.PLAYER_C
+        self.map[(self.player_left[0], self.player_left[1])] = self.PLAYER_L
+        self.map[(self.player_right[0], self.player_right[1])] = self.PLAYER_R
 
         
 
@@ -517,7 +518,7 @@ class SpaceInvaders(Game):
                 if new_pos[1] < self.MAP_HEIGHT:
                     if self.map[new_pos] == self.BULLET: 
                         self.map[new_pos] = self.EMPTY
-                    elif self.map[new_pos] == self.PLAYERL or self.map[new_pos] == self.PLAYERC or self.map[new_pos] == self.PLAYERR:
+                    elif self.map[new_pos] == self.PLAYER_L or self.map[new_pos] == self.PLAYER_C or self.map[new_pos] == self.PLAYER_R:
                         self.life_lost()
                     elif self.is_barrier(self.map[new_pos]):
                         self.map[new_pos] = self.decrement_barrier(self.map[new_pos])
@@ -534,14 +535,30 @@ class SpaceInvaders(Game):
     def is_running(self):
         return self.running
 
+    def get_char_consts(self):
+
+      return {
+        "MOTHERSHIP_L" : ord(self.MOTHERSHIP_L),
+        "MOTHERSHIP_C" : ord(self.MOTHERSHIP_C),
+        "MOTHERSHIP_R" : ord(self.MOTHERSHIP_R),
+        "INVADER0" : ord(self.INVADER1),
+        "INVADER1" : ord(self.INVADER1),
+        "INVADER2" : ord(self.INVADER2),
+        "BARRIER_1" : ord(self.BARRIER_1),
+        "BARRIER_2" : ord(self.BARRIER_2),
+        "BARRIER_3" : ord(self.BARRIER_3),
+        "BARRIER_4" : ord(self.BARRIER_4),
+        "MISSILE" : ord(self.MISSILE),
+        "BULLET" : ord(self.BULLET),
+        "PLAYER_L" : ord(self.PLAYER_L),
+        "PLAYER_C" : ord(self.PLAYER_C),
+        "PLAYER_R" : ord(self.PLAYER_R),
+        "EMPTY" : ord(' ')
+      }
+
     def get_vars_for_bot(self):
-        bot_vars = {}
-
-
+        bot_vars = self.get_char_consts()
         #player x location (center)
-
-
-        
         #mothership x location(center)
         bonus_ship_x = -1
         if self.mothership_exists:
@@ -549,57 +566,70 @@ class SpaceInvaders(Game):
 
         #for these, we send an array where 0 = y and 1 = the character (or self.EMPTY if nothing)
         #we send -1 if the location is out of bounds (for the left-1 and right+1)
+        player_x = self.player_pos[0]
 
         player_left_minus_one = self.EMPTY
-        for i in range(self.MAP_HEIGHT, 0, -1):
-          if self.map.player_pos - 2 < 0:
+        for h in range(self.MAP_HEIGHT -2, 0, -1):
+          if player_x - 2 < 0:
             player_left_minus_one = -1
-          elif not self.map[(self.player_pos - 2, self.MAP_HEIGHT -1)] == self.EMPTY:
-            player_left_minus_one = self.map[(self.player_pos - 2, self.MAP_HEIGHT -1)]
+          elif not self.map[(player_x - 2, h)] == self.EMPTY:
+            player_left_minus_one = self.map[(player_x - 2, h)]
             break
 
         player_left = self.EMPTY
-        for i in range(self.MAP_HEIGHT, 0, -1):
-          if not self.map[(self.player_pos - 1, self.MAP_HEIGHT -1)] == self.EMPTY:
-            player_left = self.map[(self.player_pos - 1, self.MAP_HEIGHT -1)]
+        for h in range(self.MAP_HEIGHT -2, 0, -1):
+          if not self.map[(player_x - 1, h)] == self.EMPTY:
+            player_left = self.map[(player_x - 1, h)]
             break
 
         player_center = self.EMPTY
-        for i in range(self.MAP_HEIGHT, 0, -1):
-          if not self.map[(self.player_pos, self.MAP_HEIGHT -1)] == self.EMPTY:
-            player_center = self.map[(self.player_pos, self.MAP_HEIGHT -1)]
+        for h in range(self.MAP_HEIGHT -2, 0, -1):
+          if not self.map[(player_x, h)] == self.EMPTY:
+            player_center = self.map[(player_x, h)]
             break
 
         player_right = self.EMPTY
-        for i in range(self.MAP_HEIGHT, 0, -1):
-          if not self.map[(self.player_pos + 1, self.MAP_HEIGHT -1)] == self.EMPTY:
-            player_right = self.map[(self.player_pos + 1, self.MAP_HEIGHT -1)]
+        for h in range(self.MAP_HEIGHT -2, 0, -1):
+          if not self.map[(player_x + 1, h)] == self.EMPTY:
+            player_right = self.map[(player_x + 1, h)]
             break
 
         player_right_plus_one = self.EMPTY
-        for i in range(self.MAP_HEIGHT, 0, -1):
-          if self.map.player_pos + 2 >= self.MAP_WIDTH:
+        for h in range(self.MAP_HEIGHT -2 , 0, -1):
+          if player_x + 2 >= self.MAP_WIDTH:
             player_right_plus_one = -1
-          elif not self.map[(self.player_pos + 2, self.MAP_HEIGHT -1)] == self.EMPTY:
-            player_right_plus_one = self.map[(self.player_pos + 2, self.MAP_HEIGHT -1)]
+          elif not self.map[(player_x + 2, h)] == self.EMPTY:
+            player_right_plus_one = self.map[(player_x + 2, h)]
             break
 
 
-        bot_vars = {"map": self.map, "bonus_ship_x": bonus_ship_x, "player_pos": self.player_pos, "player_left_minus_one": player_left_minus_one, "player_left": player_left, "player_center": player_center, "player_right": player_right, "player_right_plus_one": player_right_plus_one}
+        bot_vars["bonus_ship_x"] =  bonus_ship_x
+        bot_vars["player_x"] =  player_x
+        bot_vars["player_left_minus_one"] =  ord(player_left_minus_one)
+        bot_vars["player_left"] =  ord(player_left)
+        bot_vars["player_center"] =  ord(player_center)
+        bot_vars["player_right"] = ord(player_right)
+        bot_vars["player_right_plus_one"] = ord(player_right_plus_one)
+        # bot_vars = {"bonus_ship_x": bonus_ship_x, "player_pos": self.player_pos, "player_left_minus_one": player_left_minus_one, "player_left": player_left, "player_center": player_center, "player_right": player_right, "player_right_plus_one": player_right_plus_one}
+        # bot_vars = { "lele": tuple([tuple([3, 3, 3, 3]), tuple([33, 33, 33])]) }
 
+        #TODO: create 
+
+        print("returning bot_vars", bot_vars)
         return bot_vars
 
     @staticmethod
     def default_prog_for_bot(language):
         if language == GameLanguage.LITTLEPY:
-            return open("apple_bot.lp", "r").read()
+            return open("resources/sample_bot.lp", "r").read()
 
     @staticmethod
     def get_intro():
-        return open("intro.md", "r").read()
+        # return open("intro.md", "r").read()
+        return "Welcome to Space Invaders"
 
     def get_score(self):
-        return self.drops_eaten
+        return self.score
 
     def draw_screen(self, frame_buffer):
         # End of the game
