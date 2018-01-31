@@ -189,13 +189,15 @@ class SpaceInvaders(Game):
       clear_r = self.map.get_all_pos(self.MOTHERSHIP_C)
 
       if redraw:
-        new_l = (self.map.get_all_pos(self.MOTHERSHIP_L).pop()[0] + 3 * self.mothership_direction, 0)
-        new_c = (self.map.get_all_pos(self.MOTHERSHIP_C).pop()[0] + 3 * self.mothership_direction, 0)
-        new_r = (self.map.get_all_pos(self.MOTHERSHIP_R).pop()[0] + 3 * self.mothership_direction, 0)
-        
-        self.map[new_l] = self.MOTHERSHIP_L
-        self.map[new_c] = self.MOTHERSHIP_C
-        self.map[new_r] = self.MOTHERSHIP_R
+        #TODO: why is this check necessary?
+        if len(self.map.get_all_pos(self.MOTHERSHIP_L)) and len(self.map.get_all_pos(self.MOTHERSHIP_C)) and len(self.map.get_all_pos(self.MOTHERSHIP_R)):
+          new_l = (self.map.get_all_pos(self.MOTHERSHIP_L).pop()[0] + 3 * self.mothership_direction, 0)
+          new_c = (self.map.get_all_pos(self.MOTHERSHIP_C).pop()[0] + 3 * self.mothership_direction, 0)
+          new_r = (self.map.get_all_pos(self.MOTHERSHIP_R).pop()[0] + 3 * self.mothership_direction, 0)
+          
+          self.map[new_l] = self.MOTHERSHIP_L
+          self.map[new_c] = self.MOTHERSHIP_C
+          self.map[new_r] = self.MOTHERSHIP_R
 
 
       if len(clear_l):
