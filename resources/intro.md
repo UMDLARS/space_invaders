@@ -28,6 +28,6 @@ You are provided several variables that update every turn.
 `map_array` will contain the entire map in a 2-d array
 
 
-##Hints
-You can make some helper functions in little python. You can use these to make detecting barriers and aliens a little easier. 
+## Hints
+You can make some helper functions and loops in little python (see the little python documentation for more information). You can use these to make detecting barriers and aliens a little easier. 
 
