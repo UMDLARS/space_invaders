@@ -65,6 +65,7 @@ class SpaceInvaders(Game):
     PLAYER_C = chr(254)
     PLAYER_R = chr(255)
     EMPTY = ' '
+    OUT_OF_BOUNDS = chr(240)
 
     fire_rate = 2 #the fire rate of invaders
     def __init__(self, random):
@@ -560,6 +561,7 @@ class SpaceInvaders(Game):
         "PLAYER_C" : ord(self.PLAYER_C),
         "PLAYER_R" : ord(self.PLAYER_R),
         "EMPTY" : ord(' '),
+        "OUT_OF_BOUNDS": ord(self.OUT_OF_BOUNDS),
         "MAP_HEIGHT": self.MAP_HEIGHT,
         "MAP_WIDTH": self.MAP_WIDTH
       }
@@ -579,7 +581,7 @@ class SpaceInvaders(Game):
         player_left_minus_one = self.EMPTY
         for h in range(self.MAP_HEIGHT -2, 0, -1):
           if player_x - 2 < 0:
-            player_left_minus_one = -1
+            player_left_minus_one = self.OUT_OF_BOUNDS
           elif not self.map[(player_x - 2, h)] == self.EMPTY:
             player_left_minus_one = self.map[(player_x - 2, h)]
             break
@@ -605,7 +607,7 @@ class SpaceInvaders(Game):
         player_right_plus_one = self.EMPTY
         for h in range(self.MAP_HEIGHT -2 , 0, -1):
           if player_x + 2 >= self.MAP_WIDTH:
-            player_right_plus_one = -1
+            player_right_plus_one = self.OUT_OF_BOUNDS
           elif not self.map[(player_x + 2, h)] == self.EMPTY:
             player_right_plus_one = self.map[(player_x + 2, h)]
             break
