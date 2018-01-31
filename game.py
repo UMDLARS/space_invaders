@@ -183,9 +183,6 @@ class SpaceInvaders(Game):
             redraw = False
             self.mothership_exists = False
       
-      clear_l = self.map.get_all_pos(self.MOTHERSHIP_L).pop()
-      clear_c = self.map.get_all_pos(self.MOTHERSHIP_R).pop()
-      clear_r = self.map.get_all_pos(self.MOTHERSHIP_C).pop()
 
       if redraw:
         new_l = (self.map.get_all_pos(self.MOTHERSHIP_L).pop()[0] + 3 * self.mothership_direction, 0)
@@ -196,9 +193,17 @@ class SpaceInvaders(Game):
         self.map[new_c] = self.MOTHERSHIP_C
         self.map[new_r] = self.MOTHERSHIP_R
 
-      self.map[clear_l] = self.EMPTY
-      self.map[clear_c] = self.EMPTY
-      self.map[clear_r] = self.EMPTY
+      clear_l = self.map.get_all_pos(self.MOTHERSHIP_L)
+      clear_c = self.map.get_all_pos(self.MOTHERSHIP_R)
+      clear_r = self.map.get_all_pos(self.MOTHERSHIP_C)
+
+      if len(clear_l):
+        self.map[clear_l.pop()] = self.EMPTY
+      if len(clear_c):
+        self.map[clear_c.pop()] = self.EMPTY
+      if len(clear_r):
+        self.map[clear_r.pop()] = self.EMPTY
+
       
       return
 
