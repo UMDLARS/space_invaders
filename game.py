@@ -96,6 +96,9 @@ class SpaceInvaders(Game):
         self.lives = 3
         self.life_lost = False
 
+
+        self.debug = False
+
         self.__create_map()
 
     def __create_map(self):
@@ -273,7 +276,8 @@ class SpaceInvaders(Game):
             #TODO: will this ever occur when we are not testing? Like when someone wins?
             if len(positions) == 0:
               return
-            print(positions[0])
+            if self.debug:
+              print(positions[0])
             if positions[0][0] + 1 >= self.MAP_WIDTH:
                 move_down = True
                 self.movement_direction = Direction.LEFT
@@ -418,7 +422,8 @@ class SpaceInvaders(Game):
                 placed_objects += 1
 
     def handle_key(self, key):
-        print("calling getbotvars")
+        if self.debug:
+          print("calling getbotvars")
         self.get_vars_for_bot()
         self.turns += 1
 
@@ -465,7 +470,8 @@ class SpaceInvaders(Game):
 
         # self.msg_panel.remove("You lost a life!")
         if collision:
-            print("You lost a life!")
+            if self.debug:
+              print("You lost a life!")
             self.msg_panel.add(["You lost a life!"])
             position = self.EMPTY #clear the position
             self.lives -= 1
@@ -623,7 +629,8 @@ class SpaceInvaders(Game):
 
         #TODO: pass in the map to the bot
 
-        print("returning bot_vars", bot_vars)
+        if self.debug:
+          print("returning bot_vars", bot_vars)
         return bot_vars
 
     @staticmethod
