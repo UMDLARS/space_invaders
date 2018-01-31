@@ -11,7 +11,7 @@ Your job is to write a program that is able to survive the invasion with the hig
 ## Map Elements and Constants
 There are several elements that can be on the map at any time. These are:
 
-`MOTHERSHIP_L`, `MOTHERSHIP_C`, `MOTHERSHIP_R`, `INVADER0`, `INVADER1`, `INVADER2`, `ARRIER_1`, `BARRIER_2`, `BARRIER_3`, `BARRIER_4`, `MISSILE`, `BULLET`, `PLAYER_L`, `PLAYER_C`, `PLAYER_R`, `EMPTY`, `OUT_OF_BOUNDS`
+`MOTHERSHIP_L`, `MOTHERSHIP_C`, `MOTHERSHIP_R`, `INVADER0`, `INVADER1`, `INVADER2`, `BARRIER_1`, `BARRIER_2`, `BARRIER_3`, `BARRIER_4`, `MISSILE`, `BULLET`, `PLAYER_L`, `PLAYER_C`, `PLAYER_R`, `EMPTY`, `OUT_OF_BOUNDS`
 
 Your bot will be provided all these variables, so you can do `if x is INVADER0` or something similar. 
 
