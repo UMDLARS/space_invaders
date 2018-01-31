@@ -179,10 +179,14 @@ class SpaceInvaders(Game):
       for i in range(0, 5):
           test_x = old_center + i * self.mothership_direction
           if test_x < 0 or test_x >= self.MAP_WIDTH: #we fell off the map
+            print("fell off map")
             #remove mothership
             redraw = False
             self.mothership_exists = False
       
+      clear_l = self.map.get_all_pos(self.MOTHERSHIP_L)
+      clear_c = self.map.get_all_pos(self.MOTHERSHIP_R)
+      clear_r = self.map.get_all_pos(self.MOTHERSHIP_C)
 
       if redraw:
         new_l = (self.map.get_all_pos(self.MOTHERSHIP_L).pop()[0] + 3 * self.mothership_direction, 0)
@@ -193,9 +197,6 @@ class SpaceInvaders(Game):
         self.map[new_c] = self.MOTHERSHIP_C
         self.map[new_r] = self.MOTHERSHIP_R
 
-      clear_l = self.map.get_all_pos(self.MOTHERSHIP_L)
-      clear_c = self.map.get_all_pos(self.MOTHERSHIP_R)
-      clear_r = self.map.get_all_pos(self.MOTHERSHIP_C)
 
       if len(clear_l):
         self.map[clear_l.pop()] = self.EMPTY
