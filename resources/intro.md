@@ -1,92 +1,33 @@
-# LARS' Apple Hunt
+# LARS' Space Invaders
 
 ## Introduction
 
-Your brand new robot, a LARS (Laboratory for Advanced Systems Research) model JB334, (displayed with a `@`) is on the ground in an field full of apples (displayed with a `O`). The only problem is, your robot doesn't know where to go! Robot's current program drives around randomly, which isn't very good for finding apples, especially since your robot can only take **300** steps before its batteries go dead. 
+Aliens are invading! Thankfully, a new model of autonomous drone, the MJ324B can be used to destroy alien ships without risking human life. However, it turns out the previous programmer was past the ballmer peak when the code was written. As a result, the drones function horribly. In this simulation, which looks remarkably close to the old "space invaders" game, we are able to test drones without much physical risk. 
 
-**You are a programmer for LARS! Your job: write a program to help your robot finds the apples!**
+Your job is to write a program that is able to survive the invasion with the highest score. The fate of humanity lies in your hands. 
 
 ## The Default Program
 
-### Random and the Modulo (Remainder) Operator
+## Map Elements and Constants
+There are several elements that can be on the map at any time. These are:
 
-Your robot is programmed in Little Python (LP), a variant of the Python programming language. 
+`MOTHERSHIP_L`, `MOTHERSHIP_C`, `MOTHERSHIP_R`, `INVADER0`, `INVADER1`, `INVADER2`, `ARRIER_1`, `BARRIER_2`, `BARRIER_3`, `BARRIER_4`, `MISSILE`, `BULLET`, `PLAYER_L`, `PLAYER_C`, `PLAYER_R`, `EMPTY`, 
 
-The first thing your robot does is generates a random number between 0 and 3 (0, 1, 2 or 3). 
+Your bot will be provided all these variables, so you can do `if x is INVADER0` or something similar. 
 
-    a = rand % 4
+You are also provided the map width and height in the `MAP_WIDTH` and `MAP_HEIGHT` variables
 
-The above code picks one of four numbers using two things -- `rand` and the *modulo* operator `%`. 
+## Variables
 
-The special `rand` variable always returns a random number every time it is read. 
+You are provided several variables that update every turn. 
+`player_left_minus_one`, `player_left`, `player_center`, `player_right`, and `player_right_plus_one` will tell you what is above the player, as well as what is directly above the player one space to either direction.
 
-The *modulo* operator can be thought of as "division remainder". So, `4 % 3` is *1*, because `4 / 3` has a remainder of 1. 
+`bonus_ship_x` will contain the x position of the center of the bonus ship (aka the mothership) if it exists, otherwise this variable will contain the value -1
+`player_x` provides the player's x position (the center of the player)
 
-If you take a random number from `rand` and apply `% 4` to it, you will end up with a random number between 0 and 3 (try it on a piece of paper to convince yourself!). That random number is saved into the variable `a` using the assignment operation `a = rand % 4`.
-
-### Conditionals: The 'if' Statement
-
-Once your robot has a random number between 0 and 3, it can test that value using the `if` statement and choose to go in one of four directions based on the random number selected.
-
-In an `if` statement, a program asks a question. If the question is **true**, the program executes the code between the curly braces (`{` and `}`). If the question is **false**, nothing happens.
-
-So, the code:
-
-    if x is y {
-      z = 3
-    }
-
-... will set `z` to 3 *if and only if* the value of `x` equals the value of `y`. **Please note**: the conditional and left bracket (`{`) must be on the first line, followed by the conditional code (here `z = 3`) and finally by the right bracket (`}`) on its own line. 
-
-In addition to `is`, you can test whether something `is not` something else.
-
-Here's the first conditional statement from the default program:
+`map_array` will contain the entire map in a 2-d array
 
 
-    if a is 0 {
-      move = east
-    }
+##Hints
+You can make some helper functions in little python. You can use these to make detecting barriers and aliens a little easier. 
 
-
-This code says "if the variable `a` is equal to *0*, set the variable `move` to *east*." (Remember, `a` was set using `rand` and the modulo (`%`) operator.  
-
-The remaining 3 `if` statements cover west, north and south.
-
-    if a is 1 { 
-      move = west 
-    } 
-    if a is 2 { 
-      move = north 
-    } 
-    if a is 3 { 
-      move = south 
-    } 
-
-As you may have already guessed, your robot will move in whatever direction the variable `move` is set at the end of your program. Your program will run **300** times, and your score is the number of apples your robot manages to find during that time.
-
-Of course, your current program just walks around randomly. So it's not very good.
-
-
-## Level 1: Helping Your Robot Find Apples
-
-Your LARS-JB334 robot comes with two apple-detecting sensors. One sensor, `x_dir` tells you whether the closest apple is to the west (left) or the east (right). The other sensor, `y_dir` tells you if the closest apple is to the north (up) or south (down). `x_dir` and `y_dir` equal 0 if you are directly in line with an apple in the given direction.
-
-You can test `x_dir` and `y_dir` using a conditional `if` statement! 
-
-For example:
-
-    if x_dir is east {
-         move = east
-    }
-
-... checks to see if `x_dir` says that the closest apple is to the east, and if it it is, sets the move to be east.
-
-By creating conditionals that test `x_dir` and `y_dir` for `west`, `north` and `south` (and set `move` accordingly) your robot will walk **directly** towards the closest apple! Try it out for yourself!
-
-**NOTE:** After you change your program, press the `Submit` button.
-
-## Level 2: Avoiding Pits!
-
-Once you clear the first level of apples, things get a little more complicated: Level 2 and above have apples, but they also have **pit traps!** If your LARS-JB334 robot falls into a pit, it breaks and the game ends.
-
-Fortunately, your robot also comes equipped with four pit detectors: `pit_to_north`, `pit_to_south`, `pit_to_east`, and `pit_to_west`. By adding some additional conditional `if` statements (and setting `move` to avoid them), you can make sure that your robot won't step into a pit!

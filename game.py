@@ -633,8 +633,8 @@ class SpaceInvaders(Game):
 
     @staticmethod
     def get_intro():
-        # return open("intro.md", "r").read()
-        return "Welcome to Space Invaders"
+        return open("resources/intro.md", "r").read()
+        # return "Welcome to Space Invaders"
 
     def get_score(self):
         return self.score
