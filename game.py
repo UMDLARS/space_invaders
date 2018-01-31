@@ -553,7 +553,9 @@ class SpaceInvaders(Game):
         "PLAYER_L" : ord(self.PLAYER_L),
         "PLAYER_C" : ord(self.PLAYER_C),
         "PLAYER_R" : ord(self.PLAYER_R),
-        "EMPTY" : ord(' ')
+        "EMPTY" : ord(' '),
+        "MAP_HEIGHT": self.MAP_HEIGHT,
+        "MAP_WIDTH": self.MAP_WIDTH
       }
 
     def get_vars_for_bot(self):
@@ -610,10 +612,16 @@ class SpaceInvaders(Game):
         bot_vars["player_center"] =  ord(player_center)
         bot_vars["player_right"] = ord(player_right)
         bot_vars["player_right_plus_one"] = ord(player_right_plus_one)
-        # bot_vars = {"bonus_ship_x": bonus_ship_x, "player_pos": self.player_pos, "player_left_minus_one": player_left_minus_one, "player_left": player_left, "player_center": player_center, "player_right": player_right, "player_right_plus_one": player_right_plus_one}
-        # bot_vars = { "lele": tuple([tuple([3, 3, 3, 3]), tuple([33, 33, 33])]) }
+        map_array = []
+        for w in range(0, self.MAP_WIDTH):
+          width_arr = []
+          for h in range(0, self.MAP_HEIGHT):
+            width_arr.append(ord(self.map[(w,h)]))
+          map_array.append(tuple(width_arr))
+        bot_vars["map_array"] = tuple(map_array)
 
-        #TODO: create 
+
+        #TODO: pass in the map to the bot
 
         print("returning bot_vars", bot_vars)
         return bot_vars
