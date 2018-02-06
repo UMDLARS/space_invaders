@@ -1,19 +1,25 @@
-from __future__ import print_function
+from __future__ import print_function, division
 import math
 from enum import Enum
+
+import os
+
 from CYLGame import GameLanguage
-from CYLGame import Game
+from CYLGame import GridGame
 from CYLGame import MessagePanel
 from CYLGame import MapPanel
 from CYLGame import StatusPanel
 from CYLGame import PanelBorder
+from CYLGame.Player import DefaultGridPlayer
 from resources.Invader import Invader
+
 
 class Direction(Enum):
     RIGHT = 1
     LEFT = 2
 
-class SpaceInvaders(Game):
+
+class SpaceInvaders(GridGame):
     MAP_WIDTH = 60
     MAP_HEIGHT = 25
     SCREEN_WIDTH = 60
@@ -71,8 +77,8 @@ class SpaceInvaders(Game):
     def __init__(self, random):
         self.random = random
         self.running = True
-        self.centerx = self.MAP_WIDTH / 2
-        self.centery = self.MAP_HEIGHT / 2
+        self.centerx = self.MAP_WIDTH // 2
+        self.centery = self.MAP_HEIGHT // 2
         self.player_pos = [self.centerx, (int) (self.MAP_HEIGHT * .99)]
         self.player_right = [self.centerx + 1, (int) (self.MAP_HEIGHT * .99)]
         self.player_left = [self.centerx - 1, (int) (self.MAP_HEIGHT * .99)]
@@ -97,13 +103,10 @@ class SpaceInvaders(Game):
         self.lives = 3
         self.life_lost = False
 
-
         self.debug = False
 
-        self.__create_map()
-
-    def __create_map(self):
-        self.map = MapPanel(0, 0, self.MAP_WIDTH, self.MAP_HEIGHT+1, self.EMPTY,
+    def init_board(self):
+        self.map = MapPanel(0, 0, self.MAP_WIDTH, self.MAP_HEIGHT, self.EMPTY,
                             border=PanelBorder.create(bottom="-"))
         self.panels += [self.map]
 
@@ -112,6 +115,10 @@ class SpaceInvaders(Game):
         self.map[(self.player_left[0], self.player_left[1])] = self.PLAYER_L
 
         self.draw_level()
+
+    def create_new_player(self, prog):
+        self.player = DefaultGridPlayer(prog, self.get_move_consts())
+        return self.player
 
     def draw_level(self):
       start_barrier = 5 #we want to offset the first barrier
@@ -430,6 +437,20 @@ class SpaceInvaders(Game):
                 self.map[(x, y)] = char
                 placed_objects += 1
 
+    def do_turn(self):
+        self.handle_key(self.player.move)
+        self.player.bot_vars = self.get_vars_for_bot()
+        # End of the game
+        if self.turns >= self.MAX_TURNS:
+            self.running = False
+            self.msg_panel.add("You are out of moves.")
+        if self.lives == 0:
+            self.running = False
+            self.msg_panel.add("You lost all your lives")
+        if self.life_lost:
+            self.life_lost = False
+            self.msg_panel.add("You lost a life")
+
     def handle_key(self, key):
         if self.debug:
           print("calling getbotvars")
@@ -646,29 +667,17 @@ class SpaceInvaders(Game):
     @staticmethod
     def default_prog_for_bot(language):
         if language == GameLanguage.LITTLEPY:
-            return open("resources/sample_bot.lp", "r").read()
+            return open(os.path.join(os.path.dirname(__file__), "resources/sample_bot.lp"), "r").read()
 
     @staticmethod
     def get_intro():
-        return open("resources/intro.md", "r").read()
+        return open(os.path.join(os.path.dirname(__file__), "resources/intro.md"), "r").read()
         # return "Welcome to Space Invaders"
 
     def get_score(self):
         return self.score
 
     def draw_screen(self, frame_buffer):
-        # End of the game
-        if self.turns >= self.MAX_TURNS:
-            self.running = False
-            self.msg_panel.add("You are out of moves.")
-        if self.lives == 0:
-            self.running = False
-            self.msg_panel += ["You lost all your lives"]
-        if self.life_lost:
-            self.life_lost = False
-            self.msg_panel += ["You lost a life"]
-
-
         # if not self.running:
                 # self.msg_panel += [""+str(self.drops_eaten)+" drops. Good job!"]
 
