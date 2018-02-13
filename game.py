@@ -551,7 +551,6 @@ class SpaceInvaders(GridGame):
                 #drop each by gravity_power
                 new_pos = (pos[0], pos[1] + gravity_power)
                 invader.set_missile(False)
-                print("new_pos is" ,new_pos)
                 if new_pos[1] < self.MAP_HEIGHT:
                     if self.map[new_pos] == self.BULLET: 
                         self.map[new_pos] = self.EMPTY
