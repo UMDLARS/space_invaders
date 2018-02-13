@@ -7,7 +7,8 @@ from littlepython import Compiler
 
 from CYLGame import GameLanguage, GameRunner
 from CYLGame.Player import Room
-from game import SpaceInvaders as Game
+
+from ..game import SpaceInvaders as Game
 
 
 def get_fuzzing_seeds(new_seed_count=10):
