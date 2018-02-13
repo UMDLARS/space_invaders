@@ -190,30 +190,22 @@ class SpaceInvaders(GridGame):
             redraw = False
             self.mothership_exists = False
       
-      clear_l = self.map.get_all_pos(self.MOTHERSHIP_L)
-      clear_c = self.map.get_all_pos(self.MOTHERSHIP_R)
-      clear_r = self.map.get_all_pos(self.MOTHERSHIP_C)
+      clear_l = self.map.get_all_pos(self.MOTHERSHIP_L).pop()
+      clear_c = self.map.get_all_pos(self.MOTHERSHIP_C).pop()
+      clear_r = self.map.get_all_pos(self.MOTHERSHIP_R).pop()
+      self.map[clear_l] = self.EMPTY
+      self.map[clear_c] = self.EMPTY
+      self.map[clear_r] = self.EMPTY
 
       if redraw:
-        #TODO: why is this check necessary?
-        if len(self.map.get_all_pos(self.MOTHERSHIP_L)) and len(self.map.get_all_pos(self.MOTHERSHIP_C)) and len(self.map.get_all_pos(self.MOTHERSHIP_R)):
-          new_l = (self.map.get_all_pos(self.MOTHERSHIP_L).pop()[0] + 3 * self.mothership_direction, 0)
-          new_c = (self.map.get_all_pos(self.MOTHERSHIP_C).pop()[0] + 3 * self.mothership_direction, 0)
-          new_r = (self.map.get_all_pos(self.MOTHERSHIP_R).pop()[0] + 3 * self.mothership_direction, 0)
-          
+          new_l = (clear_l[0] + 3 * self.mothership_direction, 0)
+          new_c = (clear_c[0] + 3 * self.mothership_direction, 0)
+          new_r = (clear_r[0] + 3 * self.mothership_direction, 0)
+
           self.map[new_l] = self.MOTHERSHIP_L
           self.map[new_c] = self.MOTHERSHIP_C
           self.map[new_r] = self.MOTHERSHIP_R
 
-
-      if len(clear_l):
-        self.map[clear_l.pop()] = self.EMPTY
-      if len(clear_c):
-        self.map[clear_c.pop()] = self.EMPTY
-      if len(clear_r):
-        self.map[clear_r.pop()] = self.EMPTY
-
-      
       return
 
     def launch_mothership(self):
@@ -232,7 +224,7 @@ class SpaceInvaders(GridGame):
 
         position_l = (center_x - 1, 0)
         position_c = (center_x, 0)
-        position_r= (center_x + 1, 0)
+        position_r = (center_x + 1, 0)
         self.map[position_l] = self.MOTHERSHIP_L
         self.map[position_c] = self.MOTHERSHIP_C
         self.map[position_r] = self.MOTHERSHIP_R
@@ -348,12 +340,10 @@ class SpaceInvaders(GridGame):
         #we generate a list of all the mothership positions that we will encounter
         mothership_locations = []
         if self.mothership_exists:
-          mothership_center = self.map.get_all_pos(self.MOTHERSHIP_C).pop()[0]#there is only one mothership
+          mothership_locations.append(self.map.get_all_pos(self.MOTHERSHIP_L).pop())
+          mothership_locations.append(self.map.get_all_pos(self.MOTHERSHIP_C).pop())
+          mothership_locations.append(self.map.get_all_pos(self.MOTHERSHIP_R).pop())
           #we add 2 because we need to detect a collision with the left/right, as well as the center. 
-          for i in range(0, self.MOTHERSHIP_SPEED+2):
-            pos = ((mothership_center + self.mothership_direction * i), 0)
-            mothership_locations.append(pos)
-          
 
         for pos in sorted(self.map.get_all_pos(self.BULLET), key=lambda x: x[1], reverse=False):
             still_exists = True
@@ -516,9 +506,6 @@ class SpaceInvaders(GridGame):
         self.map[(self.player_pos[0], self.player_pos[1])] = self.PLAYER_C
         self.map[(self.player_left[0], self.player_left[1])] = self.PLAYER_L
         self.map[(self.player_right[0], self.player_right[1])] = self.PLAYER_R
-
-        
-
 
         #Fire the missiles
         self.fire_missiles()
