@@ -186,7 +186,6 @@ class SpaceInvaders(GridGame):
       for i in range(0, 5):
           test_x = old_center + i * self.mothership_direction
           if test_x < 0 or test_x >= self.MAP_WIDTH: #we fell off the map
-            print("fell off map")
             #remove mothership
             redraw = False
             self.mothership_exists = False
@@ -248,7 +247,8 @@ class SpaceInvaders(GridGame):
                 fire = self.random.randint(0, 30 - self.fire_rate) #hacky way of increasing fire percentage
                 if fire == 2: #hacky way to set it to fire at a low percentage only
                     missile_pos = (invader_pos[0], invader_pos[1] + self.gravity_power)
-                    invader.set_missile(missile_pos)
+                    if missile_pos[1] < self.MAP_HEIGHT:
+                      invader.set_missile(missile_pos)
 
     def fire_turret(self):
         #place the bullet one over the position
@@ -551,6 +551,7 @@ class SpaceInvaders(GridGame):
                 #drop each by gravity_power
                 new_pos = (pos[0], pos[1] + gravity_power)
                 invader.set_missile(False)
+                print("new_pos is" ,new_pos)
                 if new_pos[1] < self.MAP_HEIGHT:
                     if self.map[new_pos] == self.BULLET: 
                         self.map[new_pos] = self.EMPTY
@@ -561,9 +562,6 @@ class SpaceInvaders(GridGame):
                     else:
                         invader.set_missile(new_pos)
                         self.map[new_pos] = self.MISSILE
-
-                    
-
                 else: #it fell off the map
                     self.missiles_left -= 1
 
