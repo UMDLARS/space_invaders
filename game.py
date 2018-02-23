@@ -116,6 +116,9 @@ class SpaceInvaders(GridGame):
 
         self.draw_level()
 
+    def start_game(self):
+        pass
+
     def create_new_player(self, prog):
         self.player = DefaultGridPlayer(prog, self.get_move_consts())
         return self.player
