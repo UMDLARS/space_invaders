@@ -71,7 +71,6 @@ class SpaceInvaders(GridGame):
     PLAYER_R = chr(255)
     EMPTY = ' '
     OUT_OF_BOUNDS = chr(240)
-
     fire_rate = 2  # the fire rate of invaders
 
     def __init__(self, random):
@@ -102,6 +101,7 @@ class SpaceInvaders(GridGame):
         self.msg_panel.add("Welcome to " + self.GAME_TITLE + "!!!")
         self.lives = 3
         self.life_lost = False
+        self.at_bottom = False
 
         self.debug = False
 
@@ -325,6 +325,8 @@ class SpaceInvaders(GridGame):
                 #    self.map[new_pos] = self.EMPTY
 
                 #    self.invaders.remove(invader)
+            else:
+                self.at_bottom = True
 
     def move_bullets(self):
         # there should only be one tbh
@@ -429,12 +431,18 @@ class SpaceInvaders(GridGame):
         if self.turns >= self.MAX_TURNS:
             self.running = False
             self.msg_panel.add("You are out of moves.")
+        if self.at_bottom:
+            # Not quite sure why it's not adding this message to the panel or updating the lives counter at the bottom.
+            # It's a UI "feature"
+            self.msg_panel.add(["They have invaded!"])
+            self.lives = 0
         if self.lives == 0:
             self.running = False
             self.msg_panel.add("You lost all your lives")
         if self.life_lost:
             self.life_lost = False
             self.msg_panel.add("You lost a life")
+
 
     def handle_key(self, key):
         if self.debug:
