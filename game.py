@@ -3,6 +3,7 @@ import math
 from enum import Enum
 
 import os
+import sys # for printing to stderr
 
 from CYLGame import GameLanguage
 from CYLGame import GridGame
@@ -634,12 +635,33 @@ class SpaceInvaders(GridGame):
         bot_vars["player_right"] = ord(player_right)
         bot_vars["player_right_plus_one"] = ord(player_right_plus_one)
         map_array = []
+        #how can I optimize the conversion to a tuple?
+        
+
+        # for w in range(0, self.MAP_WIDTH):
+          # width_arr = []
+          # for h in range(0, self.MAP_HEIGHT):
+            # width_arr.append(ord(self.map[(w,h)]))
+          # map_array.append(tuple(width_arr))
+       # bot_vars["map_array"] = tuple(map_array)
+        # print(self.map.p_to_char, file=sys.stderr)
+
+        map_arr = []
+        # mapords = {key: ord(value) for (key, value) in self.map.p_to_char.items()}
+        # print(maparr, file=sys.stderr)
         for w in range(0, self.MAP_WIDTH):
-          width_arr = []
+          w_arr = []
           for h in range(0, self.MAP_HEIGHT):
-            width_arr.append(ord(self.map[(w,h)]))
-          map_array.append(tuple(width_arr))
-        bot_vars["map_array"] = tuple(map_array)
+            w_arr.append(ord(self.map.p_to_char[(w,h)]))
+          map_arr.append(tuple(w_arr))
+
+
+        bot_vars["map_array"] = tuple(map_arr)
+        # print(bot_vars["map_array"], file=sys.stderr)
+
+
+        # print(maparr, file=sys.stderr)
+        # bot_vars["map_array"] = {key: ord(value) for (key, value) in self.map.p_to_char}.items()
 
 
         #TODO: pass in the map to the bot
