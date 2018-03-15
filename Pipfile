@@ -16,7 +16,7 @@ codecov = "*"
 
 [packages]
 
-cylgame = "==1.5.1"
+cylgame = "==1.6.*"
 
 
 [requires]
