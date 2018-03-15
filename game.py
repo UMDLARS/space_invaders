@@ -417,16 +417,6 @@ class SpaceInvaders(GridGame):
             #if not still_exists:
             #    self.map[new_pos] = self.EMPTY
 
-    def place_objects(self, char, count):
-        placed_objects = 0
-        while placed_objects < count:
-            x = self.random.randint(0, self.MAP_WIDTH - 1)
-            # y = self.random.randint(0, self.MAP_HEIGHT - 1)
-            y = 0 #put it at the top of the screen
-
-            if self.map[(x, y)] == self.EMPTY:
-                self.map[(x, y)] = char
-                placed_objects += 1
 
     def do_turn(self):
         self.handle_key(self.player.move)
@@ -443,9 +433,6 @@ class SpaceInvaders(GridGame):
             self.msg_panel.add("You lost a life")
 
     def handle_key(self, key):
-        if self.debug:
-          print("calling getbotvars")
-        self.get_vars_for_bot()
         self.turns += 1
 
         self.map[(self.player_pos[0], self.player_pos[1])] = self.EMPTY
