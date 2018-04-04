@@ -10,9 +10,11 @@ sudo apt-get update
 sudo apt-get install python3.6 python3.6-dev
 ```
 
-To install dependencies run
+To install run
 ```
 python3.6 -m pip install pipenv
+git clone https://github.com/UMDLARS/space_invaders.git
+cd space_invaders
 pipenv install
 ```
 
