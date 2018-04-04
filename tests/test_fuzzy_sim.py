@@ -22,10 +22,10 @@ def test_run_for_playback(seed):
     compiler = Compiler()
     bot = Game.default_prog_for_bot(GameLanguage.LITTLEPY)
     prog = compiler.compile(bot)
-    room = Room([prog])
+    room = Room([prog], seed=seed)
 
-    runner = GameRunner(Game, room)
-    runner.run_for_playback(seed=seed)
+    runner = GameRunner(Game)
+    runner.run(room, playback=True)
 
 
 @pytest.mark.parametrize("seed", get_fuzzing_seeds())
@@ -34,7 +34,7 @@ def test_run_for_score(seed):
     compiler = Compiler()
     bot = Game.default_prog_for_bot(GameLanguage.LITTLEPY)
     prog = compiler.compile(bot)
-    room = Room([prog])
+    room = Room([prog], seed=seed)
 
-    runner = GameRunner(Game, room)
-    runner.run_for_avg_score(1, seed=seed, func=sum)
+    runner = GameRunner(Game)
+    runner.run(room, playback=False)
