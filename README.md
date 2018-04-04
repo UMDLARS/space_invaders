@@ -4,7 +4,7 @@ This is a game created for UMDCYL using the [CYLGame Framework](https://github.c
 This project requires Python 3.6. If you don't have this install it.  
 For Ubuntu 16.04 and 14.04 run:
 ```
-sudo apt-get install python3-pip
+sudo apt-get install python3-pip libssl-dev
 sudo add-apt-repository ppa:jonathonf/python-3.6
 sudo apt-get update
 sudo apt-get install python3.6 python3.6-dev
