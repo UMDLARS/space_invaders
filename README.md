@@ -1,10 +1,15 @@
 # Space Invaders
-This is a game created for UMDCYL.
+This is a game created for UMDCYL using the [CYLGame Framework](https://github.com/UMDCYL/CYLGame).
 ## Getting Started
-This game depends on the CYLGame Framework. Which can be found here: [https://github.com/UMDCYL/CYLGame](https://github.com/UMDCYL/CYLGame)
-After installing the framework you can play the game by running:
+This project requires python 3.5 or greater.  
+To install dependencies run
 ```
-python space_invaders.py play
+python3 -m pip install pipenv
+pipenv install
+```
+After installing the framework you can host the game by running:
+```
+pipenv run python space_invaders.py serve
 ```
 
 If you have any questions feel free to contact: Maz Jindeel @ <jinde001@d.umn.edu>
