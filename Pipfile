@@ -21,4 +21,4 @@ cylgame = "==1.6.*"
 
 [requires]
 
-python = "3.5"
+python_version = "3.6"
