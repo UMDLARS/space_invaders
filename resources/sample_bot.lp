@@ -9,7 +9,7 @@
 #
 # Here are all the possible things that are in a space:
 # * MOTHERSHIP_L, MOTHERSHIP_C, MOTHERSHIP_R
-# * INVADER0, INVADER1, INVADER2 
+# * INVADER_0, INVADER_1, INVADER_2
 # * PLAYER_L, PLAYER_C, PLAYER_R
 # * BARRIER_1, BARRIER_2, BARRIER_3, BARRIER_4 
 # * MISSILE (alien projectiles)

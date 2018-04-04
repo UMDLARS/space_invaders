@@ -38,9 +38,9 @@
         },
         "cylgame": {
             "hashes": [
-                "sha256:14e193e4f6237974591a634f09495ffd50a088d077c7fc0464275ee1b2b385c5"
+                "sha256:c802f7b8bea308b6e0e7f79fdf70de75c132f39a764a5df6170bb6171729b9b1"
             ],
-            "version": "==1.6.18"
+            "version": "==1.6.19"
         },
         "flask": {
             "hashes": [

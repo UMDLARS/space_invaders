@@ -11,6 +11,7 @@ from CYLGame import MessagePanel
 from CYLGame import MapPanel
 from CYLGame import StatusPanel
 from CYLGame import PanelBorder
+from CYLGame.Game import ConstMapping
 from CYLGame.Player import DefaultGridPlayer
 from resources.Invader import Invader
 
@@ -446,7 +447,7 @@ class SpaceInvaders(GridGame):
                 self.player_pos[0] += 1
                 self.player_right[0] += 1
                 self.player_left[0] += 1
-        if key == " ":
+        if key == "w":
             self.fire_turret()
         if key == "Q":
             self.running = False
@@ -535,32 +536,9 @@ class SpaceInvaders(GridGame):
     def is_running(self):
         return self.running
 
-    def get_char_consts(self):
-
-        return {
-            "MOTHERSHIP_L": ord(self.MOTHERSHIP_L),
-            "MOTHERSHIP_C": ord(self.MOTHERSHIP_C),
-            "MOTHERSHIP_R": ord(self.MOTHERSHIP_R),
-            "INVADER0": ord(self.INVADER1),
-            "INVADER1": ord(self.INVADER1),
-            "INVADER2": ord(self.INVADER2),
-            "BARRIER_1": ord(self.BARRIER_1),
-            "BARRIER_2": ord(self.BARRIER_2),
-            "BARRIER_3": ord(self.BARRIER_3),
-            "BARRIER_4": ord(self.BARRIER_4),
-            "MISSILE": ord(self.MISSILE),
-            "BULLET": ord(self.BULLET),
-            "PLAYER_L": ord(self.PLAYER_L),
-            "PLAYER_C": ord(self.PLAYER_C),
-            "PLAYER_R": ord(self.PLAYER_R),
-            "EMPTY": ord(' '),
-            "OUT_OF_BOUNDS": ord(self.OUT_OF_BOUNDS),
-            "MAP_HEIGHT": self.MAP_HEIGHT,
-            "MAP_WIDTH": self.MAP_WIDTH
-        }
-
     def get_vars_for_bot(self):
-        bot_vars = self.get_char_consts()
+        bot_vars = {}
+
         # player x location (center)
         # mothership x location(center)
         bonus_ship_x = -1
@@ -656,11 +634,30 @@ class SpaceInvaders(GridGame):
 
     @staticmethod
     def get_move_consts():
-        return {"west": ord("a"), "east": ord("d"), "fire": ord(" "), "stay": ord(".")}
-
-    @staticmethod
-    def get_move_names():
-        return {ord("a"): "West", ord("d"): "East", ord(" "): "Fire", ord("."): "Stay"}
+        return ConstMapping({"west": ord("a"),
+                             "east": ord("d"),
+                             "fire": ord("w"),
+                             "stay": ord("s"),
+                             "MOTHERSHIP_L": ord(SpaceInvaders.MOTHERSHIP_L),
+                             "MOTHERSHIP_C": ord(SpaceInvaders.MOTHERSHIP_C),
+                             "MOTHERSHIP_R": ord(SpaceInvaders.MOTHERSHIP_R),
+                             "INVADER_0": ord(SpaceInvaders.INVADER0),
+                             "INVADER_1": ord(SpaceInvaders.INVADER1),
+                             "INVADER_2": ord(SpaceInvaders.INVADER2),
+                             "BARRIER_1": ord(SpaceInvaders.BARRIER_1),
+                             "BARRIER_2": ord(SpaceInvaders.BARRIER_2),
+                             "BARRIER_3": ord(SpaceInvaders.BARRIER_3),
+                             "BARRIER_4": ord(SpaceInvaders.BARRIER_4),
+                             "MISSILE": ord(SpaceInvaders.MISSILE),
+                             "BULLET": ord(SpaceInvaders.BULLET),
+                             "PLAYER_L": ord(SpaceInvaders.PLAYER_L),
+                             "PLAYER_C": ord(SpaceInvaders.PLAYER_C),
+                             "PLAYER_R": ord(SpaceInvaders.PLAYER_R),
+                             "EMPTY": ord(' '),
+                             "OUT_OF_BOUNDS": ord(SpaceInvaders.OUT_OF_BOUNDS),
+                             "MAP_HEIGHT": SpaceInvaders.MAP_HEIGHT,
+                             "MAP_WIDTH": SpaceInvaders.MAP_WIDTH,
+                             })
 
 
 if __name__ == '__main__':
