@@ -38,3 +38,36 @@ def test_run_for_score(seed):
 
     runner = GameRunner(Game)
     runner.run(room, playback=False)
+
+
+@pytest.mark.parametrize("prog,seed", [("""
+func is_barrier(s) {
+    if s is BARRIER_4 or s is BARRIER_3 or s is BARRIER_2 or s is BARRIER_1 {
+        return s
+    } else {
+        return 0
+    }
+}
+
+func is_invader(s) {
+    if s is INVADER_0 or s is INVADER_2 or s is INVADER_1 {
+        return s
+    } else {
+        return 0
+    }
+}
+
+move = stay
+
+if is_barrier(player_center) or is_invader(player_center) or is_invader(player_left) or is_invader(player_left_minus_one) or is_invader(player_right_plus_one) or player_center is MISSILE {
+    move = fire
+}
+""", 8493132599199290480)])
+def test_run_for_score_with_prog(prog, seed):
+    # Make player bot
+    compiler = Compiler()
+    prog = compiler.compile(prog)
+    room = Room([prog], seed=seed)
+
+    runner = GameRunner(Game)
+    runner.run(room, playback=False)
