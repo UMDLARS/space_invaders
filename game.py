@@ -119,7 +119,8 @@ class SpaceInvaders(GridGame):
         self.draw_level()
 
     def start_game(self):
-        pass
+        # This is a hack to make sure that the map array is setup before the player makes their first move.
+        self.player.bot_vars = self.get_vars_for_bot()
 
     def create_new_player(self, prog):
         self.player = DefaultGridPlayer(prog, self.get_move_consts())
@@ -599,6 +600,15 @@ class SpaceInvaders(GridGame):
         bot_vars["player_right"] = ord(player_right)
         bot_vars["player_right_plus_one"] = ord(player_right_plus_one)
 
+        bot_vars["map_array"] = self.get_map_array_tuple()
+
+        # TODO: pass in the map to the bot
+
+        if self.debug:
+            print("returning bot_vars", bot_vars)
+        return bot_vars
+
+    def get_map_array_tuple(self):
         map_arr = []
         for w in range(0, self.MAP_WIDTH):
             w_arr = []
@@ -606,13 +616,7 @@ class SpaceInvaders(GridGame):
                 w_arr.append(ord(self.map.p_to_char[(w, h)]))
             map_arr.append(tuple(w_arr))
 
-        bot_vars["map_array"] = tuple(map_arr)
-
-        # TODO: pass in the map to the bot
-
-        if self.debug:
-            print("returning bot_vars", bot_vars)
-        return bot_vars
+        return tuple(map_arr)
 
     @staticmethod
     def default_prog_for_bot(language):
