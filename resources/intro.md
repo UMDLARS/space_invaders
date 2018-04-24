@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Aliens are invading! Thankfully, a new model of autonomous drone, the MJ324B can be used to destroy alien ships without risking human life. However, it turns out the previous programmer was past the ballmer peak when the code was written. As a result, the drones function horribly. In this simulation, which looks remarkably close to the old "space invaders" game, we are able to test drones without much physical risk. 
+Aliens are invading! Thankfully, a new model of autonomous drone, the MJ324B can be used to destroy alien ships without risking human life. However, it turns out the programmer in charge of the drone's behavior didn't do a very good job. As a result, the drones function horribly. In this simulation, which looks remarkably close to the old "space invaders" game, we are able to test drone logic without much physical risk. 
 
 Your job is to write a program that is able to survive the invasion with the highest score. The fate of humanity lies in your hands. 
 
