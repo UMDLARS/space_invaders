@@ -68,7 +68,14 @@ if player_center is BARRIER_4 or player_center is BARRIER_3 or player_center is 
 }
 
 # example of accessing the map
-# player_height = MAP_HEIGHT - 1
-# if map_array[player_x][player_height] is PLAYER_C {
-#    move = fire
+# x = 0
+# y = 0
+# invaders_left = 0
+# for x = 0; x < MAP_WIDTH; x = x + 1 {
+#     for y = 0; y < MAP_HEIGHT; y = y + 1 {
+#         thing = map_array[x][y]
+#         if thing is INVADER_1 or thing is INVADER_2 or thing is INVADER_3 or thing is MOTHERSHIP_C {
+#             invaders_left = invaders_left + 1
+#         }
+#     }
 # }
