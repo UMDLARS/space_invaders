@@ -49,7 +49,7 @@
 # This is a basic bot that moves randomly and tries to blast holes holes
 # in barriers.
 
-a = rand % 3
+a = rand % 4
 
 if a is 0 {
     move = west
@@ -61,6 +61,10 @@ if a is 1 {
 
 if a is 2 {
     move = fire
+}
+
+if a is 3 {
+    move = stay
 }
 
 if player_center is BARRIER_4 or player_center is BARRIER_3 or player_center is BARRIER_2 or player_center is BARRIER_1 {
