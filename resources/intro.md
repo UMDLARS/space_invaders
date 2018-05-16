@@ -27,6 +27,7 @@ You are provided several variables that update every turn.
 
 `map_array` will contain the entire map in a 2-d array
 
+To move or fire you must set the variable `move` to `east`, `west`, or `fire`. Any other value for `move`, including no value, will result in the ship not moving. (If it is easier to conceptualize, you could set `move` to `stay`.)
 
 ## Hints
 You can make some helper functions and loops in little python (see the little python documentation for more information). You can use these to make detecting barriers and aliens a little easier. 
