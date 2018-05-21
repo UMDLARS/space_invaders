@@ -127,22 +127,32 @@ class SpaceInvaders(GridGame):
         return self.player
 
     def draw_level(self):
+        if self.debug:
+            print("Redrawing map! turn: %d" % (self.turns))
+
         start_barrier = 5  # we want to offset the first barrier
         barrier_height = 3
         barrier_width = 5
         set_sb = False
+        self.mothership_exists = False
+
+        for w in range(0, 60):
+            for h in range(0, 25):
+                self.map[(w,h)] = self.EMPTY
+
+
         for w in range(0, 60):
             for h in range(0, 25):
                 # generating the invaders -- 5 rows of 11, alternating columns and rows
                 if h < 10 and w >= 20 and w <= 40:
-                    if (w % 2 == 0) and (h % 2 == 0):
-                        if h == 8 or h == 6:
+                    if (w % 2 == 0) and (h % 2 == 1):
+                        if h == 9 or h == 7:
                             self.invaders.append(Invader((w, h), 2))
                             self.map[(w, h)] = self.INVADER2
-                        elif h == 4 or h == 2:
+                        elif h == 5 or h == 3:
                             self.invaders.append(Invader((w, h), 1))
                             self.map[(w, h)] = self.INVADER1
-                        else:
+                        elif h == 1:
                             self.invaders.append(Invader((w, h), 0))
                             self.map[(w, h)] = self.INVADER0
 
@@ -209,6 +219,7 @@ class SpaceInvaders(GridGame):
         return
 
     def launch_mothership(self):
+
         if self.turns % 45 == 0:  # launch mothership every 45 turns
             self.mothership_exists = True
             # launch the ship
@@ -221,6 +232,9 @@ class SpaceInvaders(GridGame):
                 # the top row is 0
             else:
                 self.mothership_direction = self.RIGHT
+
+            if self.debug:
+                print("Launching mothership at %d (turn: %d)" % (center_x, self.turns))
 
             position_l = (center_x - 1, 0)
             position_c = (center_x, 0)
@@ -273,6 +287,7 @@ class SpaceInvaders(GridGame):
 
     def move_invaders(self):
 
+
         # determine if we can continue moving in the same direction (nothing will fall off the edge)
         move_down = False
         positions = None
@@ -282,8 +297,7 @@ class SpaceInvaders(GridGame):
             # TODO: will this ever occur when we are not testing? Like when someone wins?
             if len(positions) == 0:
                 return
-            if self.debug:
-                print(positions[0])
+
             if positions[0][0] + 1 >= self.MAP_WIDTH:
                 move_down = True
                 self.movement_direction = Direction.LEFT
@@ -359,10 +373,18 @@ class SpaceInvaders(GridGame):
                                 # increment the score for the aliens
                                 if invader.sprite == 0:
                                     self.score += self.INVADER0_POINTS
+                                    if self.debug:
+                                        print("Hit INVADER0! (%d left)" % (len(self.invaders)))
                                 if invader.sprite == 1:
                                     self.score += self.INVADER1_POINTS
+                                    if self.debug:
+                                        print("Hit INVADER1! (%d left)" % (len(self.invaders)))
                                 if invader.sprite == 2:
                                     self.score += self.INVADER2_POINTS
+                                    if self.debug:
+                                        print("Hit INVADER2! (%d left)" % (len(self.invaders)))
+
+
 
                                 self.invaders.remove(invader)
                         still_exists = False
@@ -430,10 +452,16 @@ class SpaceInvaders(GridGame):
             self.lives = 0
         if self.lives == 0:
             self.running = False
-            self.msg_panel.add("You lost all your lives")
+            msg = "You lost all your lives"
+            self.msg_panel.add(msg)
+            if self.debug:
+                print(msg)
         if self.life_lost:
             self.life_lost = False
-            self.msg_panel.add("You lost a life")
+            msg = "You lost a life"
+            self.msg_panel.add(msg)
+            if self.debug:
+                print(msg)
 
 
     def handle_key(self, key):
@@ -464,6 +492,16 @@ class SpaceInvaders(GridGame):
 
         # move the invaders
         self.move_bullets()  # we do hits detection first
+        if len(self.invaders) == 0:
+            self.level += 1
+            if self.debug:
+                print("*************************************************")
+                print("No more invaders! New level: %d" % self.level)
+                print("*************************************************")
+
+            self.draw_level()
+            return
+
         self.move_invaders()
         self.move_missiles(self.gravity_power)  # move all drops down 1
         self.handle_mothership()
@@ -472,6 +510,8 @@ class SpaceInvaders(GridGame):
         position = self.map[(self.player_pos[0], self.player_pos[1])]
         position_left = self.map[(self.player_left[0], self.player_left[1])]
         position_right = self.map[(self.player_right[0], self.player_right[1])]
+        if self.debug:
+            #print("(%s,%s) (%s,%s) (%s,%s)" % (self.player_pos[0], self.player_pos[1], self.player_left[0], self.player_left[1], self.player_right[0], self.player_right[1]))
         collision = False
         if position == self.MISSILE or position == self.INVADER2 or position == self.INVADER1 or position == self.INVADER0:
             collision = True
@@ -504,8 +544,6 @@ class SpaceInvaders(GridGame):
 
         self.launch_mothership()
 
-        if len(self.invaders) == 0:
-            self.level += 1
         # first we clear all the prevoius invaders
         for old_invader in self.map.get_all_pos(self.INVADER2):
             self.map[old_invader] = self.EMPTY
@@ -604,8 +642,6 @@ class SpaceInvaders(GridGame):
 
         # TODO: pass in the map to the bot
 
-        if self.debug:
-            print("returning bot_vars", bot_vars)
         return bot_vars
 
     def get_map_array_tuple(self):
