@@ -510,8 +510,7 @@ class SpaceInvaders(GridGame):
         position = self.map[(self.player_pos[0], self.player_pos[1])]
         position_left = self.map[(self.player_left[0], self.player_left[1])]
         position_right = self.map[(self.player_right[0], self.player_right[1])]
-        if self.debug:
-            #print("(%s,%s) (%s,%s) (%s,%s)" % (self.player_pos[0], self.player_pos[1], self.player_left[0], self.player_left[1], self.player_right[0], self.player_right[1]))
+
         collision = False
         if position == self.MISSILE or position == self.INVADER2 or position == self.INVADER1 or position == self.INVADER0:
             collision = True
