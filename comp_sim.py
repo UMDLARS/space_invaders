@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import sys
-from space_invaders import SpaceInvaders
+from game import SpaceInvaders
 from littlepython import Compiler
 from CYLGame.Database import GameDB
 from CYLGame.Comp import sim_competition
