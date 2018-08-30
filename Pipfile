@@ -13,6 +13,8 @@ codecov = "*"
 
 [packages]
 cylgame = "~=1.6.23"
+greenlet = {version = "*", platform_python_implementation="=='CPython'"}
+
 
 
 [requires]
