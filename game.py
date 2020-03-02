@@ -129,6 +129,7 @@ class SpaceInvaders(GridGame):
     def draw_level(self):
         if self.debug:
             print("Redrawing map! turn: %d" % (self.turns))
+        self.turns = 0 # next round turns start with zero
 
         start_barrier = 5  # we want to offset the first barrier
         barrier_height = 3
@@ -252,6 +253,28 @@ class SpaceInvaders(GridGame):
                 fire = self.random.randint(0, 30 - self.fire_rate)  # hacky way of increasing fire percentage
                 if fire == 2:  # hacky way to set it to fire at a low percentage only
                     missile_pos = (invader_pos[0], invader_pos[1] + self.gravity_power)
+                    # fixed missile collision problem at the bottom
+
+                    if (missile_pos[0] == self.player_pos[0] and missile_pos[1] == self.player_pos[1]) or (missile_pos[0] == self.player_left[0] and missile_pos[1] == self.player_left[1]) or (missile_pos[0] == self.player_right[0] and missile_pos[1] == self.player_right[1]):
+                        if self.debug:
+                           print("You lost a life!")
+                        self.msg_panel.add(["You lost a life!"])
+                        self.map[(self.player_pos[0], self.player_pos[1])] = self.EMPTY
+                        self.map[(self.player_right[0], self.player_right[1])] = self.EMPTY
+                        self.map[(self.player_left[0], self.player_left[1])] = self.EMPTY
+                        self.lives -= 1
+                        # reset to center
+                        self.player_pos = [self.centerx, (int)(self.MAP_HEIGHT * .99)]
+                        self.player_right = [self.centerx + 1, (int)(self.MAP_HEIGHT * .99)]
+                        self.player_left = [self.centerx - 1, (int)(self.MAP_HEIGHT * .99)]
+                        # remove all missiles
+                        for invader in self.invaders:
+                           invader.set_missile(False)
+                        self.lost_life = True
+                        self.map[(self.player_pos[0], self.player_pos[1])] = self.PLAYER_C
+                        self.map[(self.player_left[0], self.player_left[1])] = self.PLAYER_L
+                        self.map[(self.player_right[0], self.player_right[1])] = self.PLAYER_R
+                        # fixed collision problem at the bottom
                     if missile_pos[1] < self.MAP_HEIGHT:
                         invader.set_missile(missile_pos)
 
@@ -512,12 +535,30 @@ class SpaceInvaders(GridGame):
         position_right = self.map[(self.player_right[0], self.player_right[1])]
 
         collision = False
-        if position == self.MISSILE or position == self.INVADER2 or position == self.INVADER1 or position == self.INVADER0:
-            collision = True
-        if position_left == self.MISSILE or position == self.INVADER2 or position == self.INVADER1 or position == self.INVADER0:
-            collision = True
-        if position_right == self.MISSILE or position == self.INVADER2 or position == self.INVADER1 or position == self.INVADER0:
-            collision = True
+#        if position == self.MISSILE or position == self.INVADER2 or position == self.INVADER1 or position == self.INVADER0:
+#            collision = True
+#        if position_left == self.MISSILE or position == self.INVADER2 or position == self.INVADER1 or position == self.INVADER0:
+#            collision = True
+#        if position_right == self.MISSILE or position == self.INVADER2 or position == self.INVADER1 or position == self.INVADER0:
+#            collision = True
+
+        # fixed collision issue at the bottom
+        for invader in self.invaders:
+           invader_pos = invader.get_pos()
+           if self.player_pos[0] == invader_pos[0] and self.player_pos[1] == invader_pos[1]:
+              collision = True
+           elif self.player_left[0] == invader_pos[0] and self.player_left[1] == invader_pos[1]:
+              collision = True
+           elif self.player_right[0] == invader_pos[0] and self.player_right[1] == invader_pos[1]:
+              collision = True
+           elif position == self.MISSILE or position_left == self.MISSILE or position_right == self.MISSILE:
+              collision = True
+       # fixed collision issue at the bottom
+
+
+
+
+
 
         # self.msg_panel.remove("You lost a life!")
         if collision:
