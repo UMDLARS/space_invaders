@@ -129,7 +129,6 @@ class SpaceInvaders(GridGame):
     def draw_level(self):
         if self.debug:
             print("Redrawing map! turn: %d" % (self.turns))
-        self.turns = 0 # next round turns start with zero
 
         start_barrier = 5  # we want to offset the first barrier
         barrier_height = 3
