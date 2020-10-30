@@ -4,6 +4,6 @@ This is a game created for UMDCYL using the [CYLGame Framework](https://github.c
 
 # Installing and Playing This Game
 
-To install and play this game locally, follow the instructions in the [CYLGame repository](https://github.com/UMDLARS/CYLGame/blob/master/INSTALL_GAME.md).
+To install and play this game locally, follow the instructions in the [CYLGame repository](https://umdlars.github.io/CYLGame/userguide/installing.html).
 
 If you have any questions feel free to contact the devteam at <umdcyl-dev@d.umn.edu>.
